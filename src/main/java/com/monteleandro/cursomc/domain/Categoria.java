@@ -1,6 +1,6 @@
 package com.monteleandro.cursomc.domain;
 
-import java.io.Serializable;
+import java.io.Serializable; //para geção de arquivos, padrão do java
 
 public class Categoria implements Serializable{
 	private static final long serialVersionUID = 1L;
