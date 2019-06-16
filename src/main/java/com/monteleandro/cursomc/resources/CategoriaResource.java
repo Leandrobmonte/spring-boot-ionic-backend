@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.monteleandro.cursomc.domain.Categoria;
 import com.monteleandro.cursomc.services.CategoriaService;
+
+import javassist.tools.rmi.ObjectNotFoundException;
 //calsse controlador rest que ira responder pelo request mapping
 @RestController // local para acessar caminhos
 @RequestMapping(value = "/categorias")
@@ -21,10 +23,12 @@ public class CategoriaResource {
 	private CategoriaService service;
 	
 	@RequestMapping(value="/{id}",method = RequestMethod.GET) //padrão rest, verbo http para recuperar ou colocar dados como exemplo
-	public ResponseEntity<?> find(@PathVariable Integer id) {
+	public ResponseEntity<?> find(@PathVariable Integer id) throws ObjectNotFoundException {
 		
 		Categoria obj = service.buscar(id);
 		return ResponseEntity.ok().body(obj);
 	
 	}
 }
+
+
