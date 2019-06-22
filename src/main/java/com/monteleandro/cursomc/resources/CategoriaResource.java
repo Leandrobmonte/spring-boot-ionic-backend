@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +39,8 @@ public class CategoriaResource {
 	
 	//mappeamento para criar nova requisição de categoria
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestBody Categoria obj){
+	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objDto){
+		Categoria obj = service.fromDTO(objDto);
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(obj.getId()).toUri();
@@ -45,9 +48,14 @@ public class CategoriaResource {
 	}
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@RequestBody Categoria obj, @PathVariable Integer id) throws ObjectNotFoundException{
+	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id){
+		Categoria obj = service.fromDTO(objDto);
 		obj.setId(id);
-		obj = service.update(obj);
+		try {
+			obj = service.update(obj);
+		} catch (ObjectNotFoundException e) {
+			e.printStackTrace();
+		}
 		return ResponseEntity.noContent().build();
 	}
 	
@@ -61,7 +69,7 @@ public class CategoriaResource {
 	public ResponseEntity<List<CategoriaDTO>> findAll(){		
 		List<Categoria> list = service.findAll();
 		//List<CategoriaDTO> listDto = (List<CategoriaDTO>) list.stream().map(obj -> ((Stream<Categoria>) new CategoriaDTO(obj)).collect(Collectors.toList()));
-		List<CategoriaDTO> listDto = new ArrayList<CategoriaDTO>();
+		List<CategoriaDTO> listDto = new ArrayList<CategoriaDTO>(); // Usado para não retornar objetos dependentes
 		for(Categoria c : list) {
 			listDto.add(new CategoriaDTO(c));
 			}
@@ -69,14 +77,14 @@ public class CategoriaResource {
 	}
 	
 	@RequestMapping(value ="/page" ,method = RequestMethod.GET) //padrão rest, verbo http para recuperar ou colocar dados como exemplo
-	public ResponseEntity<Page<CategoriaDTO>> findPage(
+	public ResponseEntity<Page<CategoriaDTO>> findPage( // Paginação para categoria
 			@RequestParam(value  ="page", defaultValue = "0") Integer page, 
 			@RequestParam(value  ="linesPerPage", defaultValue = "24") Integer linesPerPage, 
 			@RequestParam(value  ="orderBy", defaultValue = "nome") String orderBy, 
 			@RequestParam(value  ="direction", defaultValue = "ASC") String direction) {		
 		Page<Categoria> list = service.findPage(page, linesPerPage, orderBy, direction);
 		Page<CategoriaDTO> listDto = list.map(obj -> new CategoriaDTO(obj));		
-		return ResponseEntity.ok().body(listDto);	
+		return ResponseEntity.ok().body(listDto);
 	}	
 }
 
