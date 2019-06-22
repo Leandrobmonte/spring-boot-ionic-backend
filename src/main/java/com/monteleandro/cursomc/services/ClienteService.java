@@ -17,7 +17,7 @@ public class ClienteService {
 	@Autowired //dependecia aumoticamente instanciada pelo spring
 	private ClienteRepository repo;
 	
-	public Cliente buscar(Integer id) throws ObjectNotFoundException{
+	public Cliente find(Integer id) throws ObjectNotFoundException{
 		Optional<Cliente> obj = repo.findById(id);	
 			return obj.orElseThrow(() -> new ObjectNotFoundException(
 					"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
