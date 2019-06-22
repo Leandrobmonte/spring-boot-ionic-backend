@@ -45,6 +45,14 @@ public class CategoriaResource {
 		obj = service.update(obj);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@RequestMapping(value="/{id}",method = RequestMethod.DELETE) //padrão rest, verbo http para recuperar ou colocar dados como exemplo
+	public ResponseEntity<Categoria> delete(@PathVariable Integer id){
+		service.delete(id);
+		return ResponseEntity.noContent().build();
+	
+	}
+	
 }
 
 

@@ -3,10 +3,12 @@ package com.monteleandro.cursomc.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.monteleandro.cursomc.domain.Categoria;
 import com.monteleandro.cursomc.repositories.CategoriaRepository;
+import com.monteleandro.cursomc.services.excepction.DataIntegrityException;
 
 import javassist.tools.rmi.ObjectNotFoundException;
 
@@ -31,5 +33,14 @@ public class CategoriaService {
 	public Categoria update(Categoria obj) throws ObjectNotFoundException {
 		find(obj.getId());		
 		return repo.save(obj);
+	}
+	
+	public void delete(Integer id){		
+		try {
+			find(id);
+			repo.deleteById(id);
+		}catch(DataIntegrityViolationException | ObjectNotFoundException e) {
+			throw new DataIntegrityException("não é possivel excluir uma categoria que possui produtos");
+		}
 	}
 }
