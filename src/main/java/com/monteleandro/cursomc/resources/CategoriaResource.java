@@ -1,6 +1,8 @@
 package com.monteleandro.cursomc.resources;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.monteleandro.cursomc.domain.Categoria;
+import com.monteleandro.cursomc.dto.CategoriaDTO;
 import com.monteleandro.cursomc.services.CategoriaService;
 
 import javassist.tools.rmi.ObjectNotFoundException;
@@ -27,9 +30,9 @@ public class CategoriaResource {
 	public ResponseEntity<Categoria> find(@PathVariable Integer id) throws ObjectNotFoundException {
 		
 		Categoria obj = service.find(id);
-		return ResponseEntity.ok().body(obj);
-	
+		return ResponseEntity.ok().body(obj);	
 	}
+	
 	//mappeamento para criar nova requisição de categoria
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@RequestBody Categoria obj){
@@ -49,10 +52,19 @@ public class CategoriaResource {
 	@RequestMapping(value="/{id}",method = RequestMethod.DELETE) //padrão rest, verbo http para recuperar ou colocar dados como exemplo
 	public ResponseEntity<Categoria> delete(@PathVariable Integer id){
 		service.delete(id);
-		return ResponseEntity.noContent().build();
-	
+		return ResponseEntity.noContent().build();	
 	}
 	
+	@RequestMapping(method = RequestMethod.GET) //padrão rest, verbo http para recuperar ou colocar dados como exemplo
+	public ResponseEntity<List<CategoriaDTO>> findAll(){		
+		List<Categoria> list = service.findAll();
+		//List<CategoriaDTO> listDto = (List<CategoriaDTO>) list.stream().map(obj -> ((Stream<Categoria>) new CategoriaDTO(obj)).collect(Collectors.toList()));
+		List<CategoriaDTO> listDto = new ArrayList<CategoriaDTO>();
+		for(Categoria c : list) {
+			listDto.add(new CategoriaDTO(c));
+			}
+		return ResponseEntity.ok().body(listDto);	
+	}	
 }
 
 
